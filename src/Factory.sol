@@ -1,49 +1,107 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Ownable2Step} from "oz/access/Ownable2Step.sol";
-import {AccessControl} from "oz/access/AccessControl.sol";
-import {Quest} from "./Quest.sol";
+import { Ownable2Step } from "oz/access/Ownable2Step.sol";
+import { AccessControl } from "oz/access/AccessControl.sol";
+import { Quest } from "./Quest.sol";
 
 contract QuestFactory is Ownable2Step, AccessControl {
-  // Variables
-  mapping(address => bool) internal admins;
+    ///////////////////////////////
+    ////////// Variables //////////
+    ///////////////////////////////
 
-  // Events
-  event QuestCreated(address indexed questAddress, string indexed name);
-  event AdminAdded(address indexed newAdmin);
-  event AdminRemoved(address indexed oldAdmin);
+    /// @notice Admin role constant, used with AccessControl
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
-  // Modifiers
-  // - onlyOwnerOrAdmin
-  modifier onlyOwnerOrAdmin() {
-    // _checkOwner();
-    // __checkRole();
-    _;
-  }
+    ////////////////////////////
+    ////////// Events //////////
+    ////////////////////////////
 
-  // Constructor
-  constructor(address[] memory _admins) {
-    // give _admins the ADMIN role
+    /// @notice Emited when a quest is created
+    event QuestCreated(address indexed questAddress, string indexed name);
 
-    for (uint256 i = 0; i < _admins.length; i++) {
-      setAdmin(_admins[i], true);
+    /// @notice Emited when an admin is added
+    event AdminAdded(address indexed newAdmin);
+
+    /// @notice Emited when an admin is removed
+    event AdminRemoved(address indexed oldAdmin);
+
+    ////////////////////////////
+    ////////// Errors //////////
+    ////////////////////////////
+
+    ///////////////////////////////
+    ////////// Modifiers //////////
+    ///////////////////////////////
+
+    /// @notice Check that caller is either the contract owner or an admin
+    /// @dev msg.sender needs to be the contract's owner or an admin
+    modifier onlyOwnerOrAdmin() {
+        //if(
+        //_checkOwner() ||
+        //_checkRole()
+        //)
+        _;
     }
-  }
 
-  // Methods
-  function createQuest(
-    string memory _name,
-    string memory _symbol,
-    address[] memory _contributors
-  ) external {}
+    /////////////////////////////////
+    ////////// Constructor //////////
+    /////////////////////////////////
 
-  function isAdmin(address _admin) public returns (bool) {
-    return admins[_admin];
-  }
+    // @param _admins List of addresses to set as contract admins
+    constructor(address[] memory _admins) {
+        for (uint256 i = 0; i < _admins.length; i++) {
+            _grantRole(ADMIN_ROLE, _admins[i]);
+        }
+    }
 
-  function setAdmin(address _admin, bool _status) public onlyOwner {
-    admins[_admin] = _status;
-  }
+    /////////////////////////////
+    ////////// Methods //////////
+    /////////////////////////////
+
+    /// @notice Method for creating a new Quest NFT
+    /// @dev This will create an instance of the Quest NFT contract
+    /// @param _name The name of the new Quest NFT
+    /// @param _symbol The symbol for the new Quest NFT
+    /// @param _contributors List of addresses to pre-set as contributors
+    /// @param _tokenURI The URI for the token metadata
+    /// @param _contractURI Contract metadata for NFT Marketplaces
+    function createQuest(
+        string memory _name,
+        string memory _symbol,
+        address[] memory _contributors,
+        string memory _tokenURI,
+        string memory _contractURI
+    ) external onlyOwnerOrAdmin {
+        Quest _quest = new Quest(
+            _name,
+            _symbol,
+            _contributors,
+            _tokenURI,
+            _contractURI
+        );
+
+        emit QuestCreated(address(_quest), _name);
+    }
+
+    /// @notice Checks if a given address posesses the admin role
+    /// @dev We use this to see if an account is an admin (i.e. in a Quest NFT, before minting, burning, transfering, etc)
+    /// @param _account Wallet address to check for admin roles
+    function isAdmin(address _account) public returns (bool) {
+        return hasRole(ADMIN_ROLE, _account);
+    }
+
+    /// @notice Grant admin role to a given account
+    /// @dev Adds an address to the list of admins
+    /// @param _account Account to be granted the admin role
+    function setAdmin(address _account) public onlyOwner {
+        _grantRole(ADMIN_ROLE, _account);
+    }
+
+    /// @notice Revoke admin role from a given account
+    /// @dev Remove an address from the list of admins
+    /// @param _account Account to have the admin role revoked
+    function revokeAdmin(address _account) public onlyOwner {
+        _revokeRole(ADMIN_ROLE, _account);
+    }
 }
-

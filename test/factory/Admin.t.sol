@@ -9,10 +9,6 @@ contract FactoryAdminTest is TestBase {
         super.setUp();
     }
 
-    function testWorks() public {
-        assert(true);
-    }
-
     // sets owner on deployment
     function testOwner__SetOnDeployment() public {
         assertEq(
@@ -20,8 +16,10 @@ contract FactoryAdminTest is TestBase {
             owner
         );
     }
-
-
     // admin role transfer should also make address DEFAULT_ADMIN_ROLE of bot role
-
+    // only admin can call createQuest
+    // only admin can call mint
+    // only admin can call burn
+    // only admin can call transferFrom
+    // only admin can call safeTransferFrom
 }
