@@ -37,11 +37,24 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Check that caller is either the contract owner or an admin
     /// @dev msg.sender needs to be the contract's owner or an admin
     modifier onlyOwnerOrAdmin() {
-        //if(
-        //_checkOwner() ||
-        //_checkRole()
-        //)
-        _;
+        if(
+            msg.sender == owner() ||
+            hasRole(ADMIN_ROLE, msg.sender)
+        ) {
+            _;
+        } else {
+            revert("QuestFactory: caller is not owner or admin");
+        }
+    }
+
+    /// @notice Check that the caller is an admin
+    /// @dev msg.sender needs to be an admin
+    modifier onlyAdmin() {
+        if(hasRole(ADMIN_ROLE, msg.sender)) {
+            _;
+        } else {
+            revert("QuestFactory: caller is not admin");
+        }
     }
 
     /////////////////////////////////
@@ -50,6 +63,8 @@ contract QuestFactory is Ownable2Step, AccessControl {
 
     // @param _admins List of addresses to set as contract admins
     constructor(address[] memory _admins) {
+        _grantRole(ADMIN_ROLE, msg.sender);
+
         for (uint256 i = 0; i < _admins.length; i++) {
             _grantRole(ADMIN_ROLE, _admins[i]);
         }
@@ -72,7 +87,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
         address[] memory _contributors,
         string memory _tokenURI,
         string memory _contractURI
-    ) external onlyOwnerOrAdmin {
+    ) external onlyOwnerOrAdmin returns (Quest) {
         Quest _quest = new Quest(
             _name,
             _symbol,
@@ -82,6 +97,8 @@ contract QuestFactory is Ownable2Step, AccessControl {
         );
 
         emit QuestCreated(address(_quest), _name);
+
+        return _quest;
     }
 
     /// @notice Checks if a given address posesses the admin role
