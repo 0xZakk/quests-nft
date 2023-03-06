@@ -13,13 +13,12 @@ contract Quest is ERC721 {
     ///////////////////////////////
 
     /// @notice Tracking the factory so we can call back to it
-    QuestFactory factory; // hard code this after deployment or take this in constructor?
-    // - some way to track the next token ID
+    QuestFactory factory; 
 
     /// @notice Token ID for the next token to be minted
     uint256 nextTokenID;
 
-    /// @notice Base token URI for the ERC721s representing the staked position
+    /// @notice Base token URI for the ERC721
     string public baseTokenURI;
 
     /// @notice Contract URI for marketplace metadata

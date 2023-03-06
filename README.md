@@ -1,58 +1,58 @@
-<img align="right" width="150" height="150" top="100" src="./public/readme.jpg">
+# Quests NFT
 
-# femplate • [![tests](https://github.com/refcell/femplate/actions/workflows/ci.yml/badge.svg?label=tests)](https://github.com/refcell/femplate/actions/workflows/ci.yml) ![license](https://img.shields.io/github/license/refcell/femplate?label=license) ![solidity](https://img.shields.io/badge/solidity-^0.8.17-lightgrey)
+A key feature of [Quests.com](https://quests.com/), a platform for creating
+a socially-verified portfolio of work, is the commemorative Quest NFT.
 
-A **Clean**, **Robust** Template for Foundry Projects.
+This token is minted and distributed to all contributors at the end of a quest
+to represent their unique contribution. Combined, a collection of Quest NFTs
+make up a contributor's body of work.
 
-### Usage
+## System Overview
 
-**Building & Testing**
+This system has two main components: a factory contract and a quest NFT
+contract:
 
-Build the foundry project with `forge build`. Then you can run tests with `forge test`.
+![System diagram of the Quests NFT platform, including the Factory and Quest NFT contracts](./assets/Quests NFT.drawio.png)
 
-**Deployment & Verification**
+The factory is implemented behind an [ `ERC1967Proxy`
+](https://docs.openzeppelin.com/contracts/4.x/api/proxy) (found at
+[`src/proxies/FactoryProxy`](./src/proxies/FactoryProxy.sol)). The Factory
+implementation ( [`src/Factory.sol`](./src/Factory.sol) ) is where instances of
+a Quest NFT ([`src/Quest.sol`](./src/Quest.sol)) are created at the end of
+a project. Quest NFTs can only be created or updated by admins on the Factory
+contract.
 
-Inside the [`utils/`](./utils/) directory are a few preconfigured scripts that can be used to deploy and verify contracts.
+## Contracts
 
-Scripts take inputs from the cli, using silent mode to hide any sensitive information.
+### [`Factory.sol`](./src/Factory.sol)
 
-_NOTE: These scripts are required to be _executable_ meaning they must be made executable by running `chmod +x ./utils/*`._
+The Factory contract is used to create instances of the Quest NFT - one per
+project in quests.com - and manage a list of permissioned wallets.
 
-_NOTE: these scripts will prompt you for the contract name and deployed addresses (when verifying). Also, they use the `-i` flag on `forge` to ask for your private key for deployment. This uses silent mode which keeps your private key from being printed to the console (and visible in logs)._
+A quest can be created with the `createQuest` method, which will create a new
+instance of `Quest.sol` with th eprovided data (name, symbol, contributors,
+token URI, and contract URI). A quest can only be created by an admin.
 
+The Factory stores a list of admins using OpenZeppelin's `AccessControl` and has
+an owner address using `Ownable2Step`. The contract owner can grant the admin
+role to an address. The admin role is required to create a new quest or update
+an existing quest.
 
-### I'm new, how do I get started?
+### [`Quest.sol`](./src/Quest.sol)
 
-We created a guide to get you started with: [GETTING_STARTED.md](./GETTING_STARTED.md).
+The majority of the system's logic is in the `Quest` contract.
 
+The admin role on the Factory contract is required to create a new quest or
+update an existing quest (`Quest.sol` checks for the admin role on
+`Factory.sol`).
 
-### Blueprint
+The contract is a fairly standard NFT contract with a couple of important
+considerations:
 
-```txt
-lib
-├─ forge-std — https://github.com/foundry-rs/forge-std
-├─ solmate — https://github.com/transmissions11/solmate
-scripts
-├─ Deploy.s.sol — Example Contract Deployment Script
-src
-├─ Greeter — Example Contract
-test
-└─ Greeter.t — Example Contract Tests
-```
+- Most actions are gated to admins on the `Factory.sol` contract.
+- `transferFrom` is a shadow implementation of `ERC721.sol#transferFrom` by solmate that skips checking for approval. This is okay since only addresses with the admin role on `Factory.sol` can mint, burn, and transfer tokens.
+- The contract maps addresses to IDs (like most NFT contracts) and data about the quest is stored off-chain on IPFS.
 
+## License
 
-### Notable Mentions
-
-- [femplate](https://github.com/refcell/femplate)
-- [foundry](https://github.com/foundry-rs/foundry)
-- [solmate](https://github.com/Rari-Capital/solmate)
-- [forge-std](https://github.com/brockelmore/forge-std)
-- [forge-template](https://github.com/foundry-rs/forge-template)
-- [foundry-toolchain](https://github.com/foundry-rs/foundry-toolchain)
-
-
-### Disclaimer
-
-_These smart contracts are being provided as is. No guarantee, representation or warranty is being made, express or implied, as to the safety or correctness of the user interface or the smart contracts. They have not been audited and as such there can be no assurance they will work as intended, and users may experience delays, failures, errors, omissions, loss of transmitted information or loss of funds. The creators are not liable for any of the foregoing. Users should proceed with caution and use at their own risk._
-
-See [LICENSE](./LICENSE) for more details.
+This project is licensed under MIT. See [`LICENSE`](./LICENSE) for more details.
