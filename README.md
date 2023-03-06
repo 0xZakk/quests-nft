@@ -14,13 +14,10 @@ contract:
 
 ![System diagram of the Quests NFT platform, including the Factory and Quest NFT contracts](./assets/Quests NFT.drawio.png)
 
-The factory is implemented behind an [ `ERC1967Proxy`
-](https://docs.openzeppelin.com/contracts/4.x/api/proxy) (found at
-[`src/proxies/FactoryProxy`](./src/proxies/FactoryProxy.sol)). The Factory
-implementation ( [`src/Factory.sol`](./src/Factory.sol) ) is where instances of
-a Quest NFT ([`src/Quest.sol`](./src/Quest.sol)) are created at the end of
-a project. Quest NFTs can only be created or updated by admins on the Factory
-contract.
+The Factory implementation ( [`src/Factory.sol`](./src/Factory.sol) ) is where
+instances of a Quest NFT ([`src/Quest.sol`](./src/Quest.sol)) are created at the
+end of a project. Quest NFTs can only be created or updated by admins on the
+Factory contract.
 
 ## Contracts
 
@@ -30,7 +27,7 @@ The Factory contract is used to create instances of the Quest NFT - one per
 project in quests.com - and manage a list of permissioned wallets.
 
 A quest can be created with the `createQuest` method, which will create a new
-instance of `Quest.sol` with th eprovided data (name, symbol, contributors,
+instance of `Quest.sol` with the provided data (name, symbol, contributors,
 token URI, and contract URI). A quest can only be created by an admin.
 
 The Factory stores a list of admins using OpenZeppelin's `AccessControl` and has

@@ -26,7 +26,7 @@ contract TestBase is Test {
         vm.stopPrank();
     }
 
-    function _createQuest() public returns (Quest quest) {
+    function _createQuest() public returns (Quest) {
         vm.prank(owner);
         Quest quest = factory.createQuest(
             questName,

@@ -100,7 +100,7 @@ contract Quest is ERC721 {
     /// @notice Adds a contributor to this quest
     /// @dev Mints the account a token to represent their contribution to the quest
     /// @param _to The account that will receive the token
-    function mint(address _to) external onlyAdmin returns (uint256 _id) {
+    function mint(address _to) external onlyAdmin returns (uint256) {
         if(balanceOf(_to) > 0) revert AlreadyHolding();
         uint256 _id = nextTokenID;
 
