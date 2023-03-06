@@ -9,23 +9,16 @@ contract TestBase is Test {
     address owner = makeAddr("owner");
     address user = makeAddr("user");
     address userBackupWallet = makeAddr("userBackupWallet");
-    address[] public admins = makeAdminAddresses(5);
+    address admin1 = makeAddr("admin1");
+    address admin2 = makeAddr("admin2");
+    address[] admins = [admin1, admin2];
     QuestFactory factory;
 
     string questName = "Test Quest";
     string questSymbol = "TQ";
-    address[] questContributors = makeAdminAddresses(5);
     string questTokenURI = "https://test.com";
     string questContractURI = "https://test.com";
-
-    function makeAdminAddresses(uint8 _num) public pure returns (address[] memory){
-        address[] memory _admins = new address[](_num);
-        for (uint256 i = 0; i < _num; i++) {
-            _admins[i] = vm.addr(i + 1);
-        }
-
-        return _admins;
-    }
+    address[] questContributors = [makeAddr("contributor1"), makeAddr("contributor2")];
 
     function setUp() public virtual {
         vm.startPrank(owner);
@@ -42,5 +35,7 @@ contract TestBase is Test {
             questTokenURI,
             questContractURI
         );
+
+        return quest;
     }
 }

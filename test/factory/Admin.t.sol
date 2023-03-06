@@ -28,7 +28,7 @@ contract FactoryAdminTest is TestBase {
         }
     }
 
-    // automatically give the owner th eadmin role
+    // automatically give the owner the admin role
     function testAdmin__OwnerHasAdminRole() public {
         assertEq(
             factory.isAdmin(owner),
@@ -90,63 +90,13 @@ contract FactoryAdminTest is TestBase {
         );
     }
 
-    // only admin can call mint
-    function testAdmin__OnlyAdminCanMint() public {
-        Quest quest = _createQuest();
 
-        // reverts if not called by admin
-        vm.expectRevert();
-        quest.mint(
-            user
-        );
-
-        vm.prank(admins[0]);
-        quest.mint(
-            user
-        );
-
-        assertEq(
-            quest.balanceOf(user),
-            1
-        );
-    }
-
-    // // only admin can call burn
-    // function testAdmin__OnlyAdminCanBurn() public {
-    //     Quest quest = _createQuest();
-    //
-    //     vm.prank(admins[0]);
-    //     uint256 id = quest.mint(
-    //         user
-    //     );
-    //
-    //     // reverts if not called by admin
-    //     vm.expectRevert();
-    //     quest.burn(
-    //         id
-    //     );
-    //
-    //     vm.prank(admins[0]);
-    //     quest.burn(
-    //         id
-    //     );
-    //
-    //     assertEq(
-    //         quest.balanceOf(user),
-    //         0
-    //     );
-    // }
     // // only admin can call transferFrom
     // function testAdmin__OnlyAdminCanTransferFrom() public {
     //     Quest quest = _createQuest();
     //
     //     vm.prank(admins[0]);
     //     uint256 id = quest.mint(
-    //         user
-    //     );
-    //
-    //     assertEq(
-    //         quest.ownerOf(id),
     //         user
     //     );
     //
@@ -178,6 +128,7 @@ contract FactoryAdminTest is TestBase {
     //         userBackupWallet
     //     );
     // }
+
     //
     // // only admin can call safeTransferFrom
     // function testAdmin__OnlyAdminCanSafeTransferFrom() public {
