@@ -104,7 +104,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Checks if a given address posesses the admin role
     /// @dev We use this to see if an account is an admin (i.e. in a Quest NFT, before minting, burning, transfering, etc)
     /// @param _account Wallet address to check for admin roles
-    function isAdmin(address _account) public returns (bool) {
+    function isAdmin(address _account) public view returns (bool) {
         return hasRole(ADMIN_ROLE, _account);
     }
 

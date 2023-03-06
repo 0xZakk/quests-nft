@@ -58,7 +58,11 @@ contract Quest is ERC721 {
     /// @notice Used to gate methods that can only be called by an admin
     modifier onlyAdmin() {
         // check on Factory if msg.sender has ADMIN role
-        _;
+        if (factory.isAdmin(msg.sender)) {
+            _;
+        } else {
+            revert NotAuthorized();
+        }
     }
 
     /////////////////////////////////
@@ -97,12 +101,14 @@ contract Quest is ERC721 {
     /// @notice Adds a contributor to this quest
     /// @dev Mints the account a token to represent their contribution to the quest
     /// @param _to The account that will receive the token
-    function mint(address _to) external onlyAdmin {
+    function mint(address _to) external onlyAdmin returns (uint256 _id) {
         if(balanceOf(_to) > 0) revert AlreadyHolding();
         uint256 _id = nextTokenID;
 
         _mint(_to, _id);
         ++nextTokenID;
+
+        return _id;
     }
 
     /// @notice Remove a contributor from a quest
@@ -113,7 +119,7 @@ contract Quest is ERC721 {
     }
 
     /// @notice Recover a user's Quests
-    /// @dev Admins can transfer tokens from one account to another, should someone lose access to their wallet
+    /// @dev Admins can transfer tokens from one account to another, should someone lose access to their wallet. This is a shadow implementation of transferFrom from solmate that skips the approval check.
     /// @param _from Address to transfer the ID from
     /// @param _to Address to transfer the ID to
     /// @param _id Token ID to transfer
@@ -122,7 +128,23 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        transferFrom(_from, _to, _id);
+        require(_from == _ownerOf[_id], "WRONG_FROM");
+
+        require(_to != address(0), "INVALID_RECIPIENT");
+
+        // Underflow of the sender's balance is impossible because we check for
+        // ownership above and the recipient's balance can't realistically overflow.
+        unchecked {
+            _balanceOf[_from]--;
+
+            _balanceOf[_to]++;
+        }
+
+        _ownerOf[_id] = _to;
+
+        delete getApproved[_id];
+
+        emit Transfer(_from, _to, _id);
     }
 
     /// @notice Recover a user's Quests
@@ -135,7 +157,7 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        safeTransferFrom(_from, _to, _id);
+        super.safeTransferFrom(_from, _to, _id);
     }
 
     /// @notice Recover a user's Quests
@@ -149,7 +171,7 @@ contract Quest is ERC721 {
         uint256 _id,
         bytes calldata _data
     ) public override onlyAdmin {
-        safeTransferFrom(_from, _to, _id, _data);
+        super.safeTransferFrom(_from, _to, _id, _data);
     }
 
     /// @notice Token URI to find metadata for each _id
