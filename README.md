@@ -12,7 +12,7 @@ make up a contributor's body of work.
 This system has two main components: a factory contract and a quest NFT
 contract:
 
-![System diagram of the Quests NFT platform, including the Factory and Quest NFT contracts](./assets/Quests NFT.drawio.png)
+![System diagram of the Quests NFT platform, including the Factory and Quest NFT contracts](./assets/system-architecture.png)
 
 The Factory implementation ( [`src/Factory.sol`](./src/Factory.sol) ) is where
 instances of a Quest NFT ([`src/Quest.sol`](./src/Quest.sol)) are created at the
