@@ -37,6 +37,12 @@ contract Quest is ERC721 {
     /// @notice Emited when a token is transfer and a contributor's quests are recovered
     event QuestTransfered(address indexed _oldContributor, address indexed _newContributor, uint256 _tokenId);
 
+    /// @notice Emitted when the baseTokenURI is updated
+    event UpdateTokenURI(string _oldBaseTokenURI, string _newBaseTokenURI);
+
+    /// @notice Emittedwhen the contractURI is updated
+    event UpdateContractURI(string _oldContractURI, string _newContractURI);
+
     ////////////////////////////
     ////////// Errors //////////
     ////////////////////////////
@@ -183,14 +189,24 @@ contract Quest is ERC721 {
         returns (string memory)
     {
         if (ownerOf(_id) == address(0)) revert NonExistentToken();
+        return baseTokenURI;
+    }
 
-        string memory baseURI = baseTokenURI;
-        return
-            bytes(baseURI).length > 0
-                ? string(
-                    abi.encodePacked(baseURI, _id.toString(), ".json")
-                )
-                : "";
+    /// @notice Setter method for updating the tokenURI
+    /// @dev Only admins can update the tokenURI
+    /// @param _newTokenURI The new tokenURI
+    function setTokenURI(string memory _newTokenURI) external onlyAdmin {
+        string memory _oldTokenURI = baseTokenURI;
+        baseTokenURI = _newTokenURI;
+        emit UpdateTokenURI(_oldTokenURI, _newTokenURI);
+    }
 
+    /// @notice Setter method for updating the contractURI
+    /// @dev Only admins can update the contractURI
+    /// @param _newContractURI The new contractURI
+    function setContractURI(string memory _newContractURI) external onlyAdmin {
+        string memory _oldContractURI = contractURI;
+        contractURI = _newContractURI;
+        emit UpdateContractURI(_oldContractURI, _newContractURI);
     }
 }
