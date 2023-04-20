@@ -1,7 +1,10 @@
-//// SPDX-License-Identifier: MIT
-//pragma solidity ^0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.13;
 
-//import {Script} from 'forge-std/Script.sol';
+import {Script} from 'forge-std/Script.sol';
+
+contract Deploy is Script {
+}
 
 //import {Greeter} from "src/Greeter.sol";
 

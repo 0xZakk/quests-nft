@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity 0.8.13;
 
 interface IQuest {
     event Approval(address indexed owner, address indexed spender, uint256 indexed id);
