@@ -130,4 +130,48 @@ contract RecoverQuestTest is TestBase {
             userBackupWallet
         );
     }
+
+    // recovering a quest can't lead to a duplicate quest
+    function testRecoverQuest__CannotRecoverDuplicateQuest() public {
+        Quest quest = _createQuest();
+
+        // questContributors[0] holds a quest
+        assertEq(
+            quest.balanceOf(questContributors[0]),
+            1
+        );
+
+        vm.prank(admin1);
+        uint256 questId = quest.mint( user );
+
+        // User holds a quest
+        assertEq(
+            quest.balanceOf(user),
+            1
+        );
+
+        vm.startPrank(admin1);
+
+        // Reverts because questContributors[0] already holds a token
+        vm.expectRevert();
+        quest.transferFrom(
+            user,
+            questContributors[0],
+            questId
+        );
+
+        vm.stopPrank();
+
+        // questContributors[0] holds a quest
+        assertEq(
+            quest.balanceOf(questContributors[0]),
+            1
+        );
+
+        // User holds a quest
+        assertEq(
+            quest.balanceOf(user),
+            1
+        );
+    }
 }
