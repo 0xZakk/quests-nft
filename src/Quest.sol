@@ -120,7 +120,12 @@ contract Quest is ERC721 {
     /// @notice Remove a contributor from a quest
     /// @dev Burning a token represents removing a contributor from a quest
     /// @param _id The token ID to burn
-    function burn(uint256 _id) external onlyAdmin {
+    function burn(uint256 _id) external {
+        // msg.sender must be an admin or the owner of the token
+        if (msg.sender != ownerOf(_id) && !factory.isAdmin(msg.sender)) {
+            revert NotAuthorized();
+        }
+
         _burn(_id);
     }
 
