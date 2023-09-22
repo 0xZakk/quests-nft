@@ -187,6 +187,26 @@ contract Quest is ERC721 {
         super.safeTransferFrom(_from, _to, _id, _data);
     }
 
+    /// @notice No op method for approve
+    /// @dev Quests can't be transferred, other than by admins, so we don't need to implement approve.
+    /// @param _spender Address to approve
+    /// @param _id Token ID to approve
+    function approve(address _spender, uint256 _id) public pure override {
+        revert NotAuthorized();
+    }
+
+    /// @notice No op method for setApprovalForAll
+    /// @dev Quests can't be transferred, other than by admins, so we don't need to implement setApprovalForAll.
+    /// @param _operator Address to approve
+    /// @param _approved Whether to approve or not
+    function setApprovalForAll(address _operator, bool _approved)
+        public
+        pure
+        override
+    {
+        revert NotAuthorized();
+    }
+
     /// @notice Token URI to find metadata for each _id
     /// @dev The metadata will be a variation on the metadata of the underlying token
     /// @param _id Token ID to look up metadata for
