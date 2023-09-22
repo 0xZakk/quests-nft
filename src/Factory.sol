@@ -20,12 +20,6 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Emited when a quest is created
     event QuestCreated(address indexed questAddress, string indexed name);
 
-    /// @notice Emited when an admin is added
-    event AdminAdded(address indexed newAdmin);
-
-    /// @notice Emited when an admin is removed
-    event AdminRemoved(address indexed oldAdmin);
-
     ////////////////////////////
     ////////// Errors //////////
     ////////////////////////////
