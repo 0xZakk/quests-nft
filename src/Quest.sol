@@ -28,15 +28,6 @@ contract Quest is ERC721 {
     ////////// Events //////////
     ////////////////////////////
 
-    /// @notice Emitted when a token is minted and a contributor is added to the quest
-    event QuestMinted(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is burned and a contributor is removed from a quest
-    event QuestBurned(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is transfer and a contributor's quests are recovered
-    event QuestTransfered(address indexed _oldContributor, address indexed _newContributor, uint256 _tokenId);
-
     /// @notice Emitted when the baseTokenURI is updated
     event UpdateTokenURI(string _oldBaseTokenURI, string _newBaseTokenURI);
 
