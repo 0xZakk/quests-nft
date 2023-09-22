@@ -93,6 +93,7 @@ contract Quest is ERC721 {
         contractURI = _contractURI;
 
         for (uint256 i = 0; i < _contributors.length; i++) {
+            if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
             _mint(_contributors[i], i);
         }
 
@@ -136,6 +137,8 @@ contract Quest is ERC721 {
         require(_from == _ownerOf[_id], "WRONG_FROM");
 
         require(_to != address(0), "INVALID_RECIPIENT");
+
+        if(balanceOf(_to) > 0) revert AlreadyHolding();
 
         // Underflow of the sender's balance is impossible because we check for
         // ownership above and the recipient's balance can't realistically overflow.
