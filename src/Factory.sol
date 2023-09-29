@@ -30,6 +30,9 @@ contract QuestFactory is Ownable2Step, AccessControl {
     ////////// Errors //////////
     ////////////////////////////
 
+    /// @notice Thrown when a caller is not authorized
+    error NotAuthorized();
+
     ///////////////////////////////
     ////////// Modifiers //////////
     ///////////////////////////////
@@ -43,7 +46,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
         ) {
             _;
         } else {
-            revert("QuestFactory: caller is not owner or admin");
+            revert NotAuthorized();
         }
     }
 
@@ -53,7 +56,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
         if(hasRole(ADMIN_ROLE, msg.sender)) {
             _;
         } else {
-            revert("QuestFactory: caller is not admin");
+            revert NotAuthorized();
         }
     }
 
