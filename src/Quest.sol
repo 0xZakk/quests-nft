@@ -56,6 +56,12 @@ contract Quest is ERC721 {
     /// @notice Thrown when an account already holds this Quest NFT
     error AlreadyHolding();
 
+    /// @notice Thrown when a recipient is invalid
+    error InvalidRecipient();
+
+    /// @notice Thrown when a from address is invalid
+    error InvalidFrom();
+
     ///////////////////////////////
     ////////// Modifiers //////////
     ///////////////////////////////
@@ -139,9 +145,9 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        require(_from == _ownerOf[_id], "WRONG_FROM");
+        if(_from == _ownerOf[_id]) revert InvalidFrom();
 
-        require(_to != address(0), "INVALID_RECIPIENT");
+        if(_to != address(0)) revert InvalidRecipient();
 
         if(balanceOf(_to) > 0) revert AlreadyHolding();
 
