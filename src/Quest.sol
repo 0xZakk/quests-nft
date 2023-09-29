@@ -2,12 +2,9 @@
 pragma solidity 0.8.13;
 
 import { ERC721 } from "solmate/tokens/ERC721.sol";
-import "solmate/utils/LibString.sol";
 import { QuestFactory } from "./Factory.sol";
 
 contract Quest is ERC721 {
-    using LibString for uint256;
-
     ///////////////////////////////
     ////////// Variables //////////
     ///////////////////////////////
