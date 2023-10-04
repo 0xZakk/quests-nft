@@ -13,6 +13,7 @@ contract TestBase is Test {
     address admin2 = makeAddr("admin2");
     address[] admins = [admin1, admin2];
     QuestFactory factory;
+    address quest;
 
     string questName = "Test Quest";
     string questSymbol = "TQ";
@@ -22,20 +23,35 @@ contract TestBase is Test {
 
     function setUp() public virtual {
         vm.startPrank(owner);
-        factory = new QuestFactory(admins);
+        quest = address( new Quest("generic quest contract", "GQC") );
+        factory = new QuestFactory(quest, admins);
         vm.stopPrank();
     }
 
     function _createQuest() public returns (Quest) {
         vm.prank(owner);
-        Quest quest = factory.createQuest(
+        Quest testQuest = factory.createQuest(
             questName,
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI
+            questContractURI,
+            "testing mc testface"
         );
 
-        return quest;
+        return testQuest;
+    }
+    function _createQuest(string calldata _nonce) public returns (Quest) {
+        vm.prank(owner);
+        Quest testQuest = factory.createQuest(
+            questName,
+            questSymbol,
+            questContributors,
+            questTokenURI,
+            questContractURI,
+            _nonce
+        );
+
+        return testQuest;
     }
 }

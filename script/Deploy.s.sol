@@ -2,7 +2,8 @@
 pragma solidity 0.8.13;
 
 import {Script} from 'forge-std/Script.sol';
-import { QuestFactory } from "../src/Quest.sol";
+import { QuestFactory } from "../src/Factory.sol";
+import { Quest } from "../src/Quest.sol";
 
 contract Deploy is Script {
   address[] public admins = [
@@ -14,7 +15,8 @@ contract Deploy is Script {
     uint256 deployerPrivateKey = vm.envUint("DEPLOYER_KEY");
     vm.startBroadcast(deployerPrivateKey);
 
-    QuestFactory questFactory = new QuestFactory( admins);
+    address quest = address( new Quest("generic quest", "GQ") );
+    QuestFactory questFactory = new QuestFactory(quest, admins);
 
     vm.stopBroadcast();
   }

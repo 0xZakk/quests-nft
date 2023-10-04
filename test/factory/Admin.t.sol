@@ -77,7 +77,8 @@ contract FactoryAdminTest is TestBase {
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI
+            questContractURI,
+            "testing 123"
         );
 
         vm.prank(admins[0]);
@@ -86,7 +87,30 @@ contract FactoryAdminTest is TestBase {
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI
+            questContractURI,
+            "testing 123"
+        );
+    }
+    // Sets Quest implementation correctly
+    function testAdmin__SetsQuestImplementationCorrectly() public {
+        assertEq(
+            address(quest),
+            address(factory.questImplementation())
+        );
+    }
+    // Admin can update Quest implementation
+    function testAdmin__AdminCanUpdateQuestImplementation() public {
+        address newImplementation = address(0x100);
+
+        // reverts if not called by admin
+        vm.expectRevert();
+        factory.setQuestImplementation(newImplementation);
+
+        vm.prank(owner);
+        factory.setQuestImplementation(newImplementation);
+        assertEq(
+            address(factory.questImplementation()),
+            newImplementation
         );
     }
 }

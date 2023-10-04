@@ -74,23 +74,34 @@ contract Quest is ERC721 {
     ////////// Constructor //////////
     /////////////////////////////////
 
+    constructor(
+        string memory _name,
+        string memory _symbol
+    ) ERC721(_name, _symbol) {}
+
+    // @notice Initialize the contract after it has been deployed
     /// @param _name Name of the Quest NFT
     /// @param _symbol Symbol for the Quest NFT
     /// @param _contributors List of addresses to pre-mint to
     /// @param _tokenURI URI for the token
     /// @param _contractURI Contract metadata URI (for NFT marketplaces)
-    constructor(
+    function initialize(
         string memory _name,
         string memory _symbol,
         address[] memory _contributors,
         string memory _tokenURI,
         string memory _contractURI
-    ) ERC721(_name, _symbol) {
+    ) external {
         // set factory address
         factory = QuestFactory(msg.sender);
+
         // accept and set tokenURI
         baseTokenURI = _tokenURI;
         contractURI = _contractURI;
+
+        // update name and symbol
+        name = _name;
+        symbol = _symbol;
 
         for (uint256 i = 0; i < _contributors.length; i++) {
             if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
