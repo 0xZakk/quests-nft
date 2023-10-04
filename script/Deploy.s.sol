@@ -7,7 +7,8 @@ import { QuestFactory } from "../src/Quest.sol";
 contract Deploy is Script {
   address[] public admins = [
     0xC3268DDB8E38302763fFdC9191FCEbD4C948fe1b,
-    0x97cd197c0aAA41564B55F3b13A8b2a6204DE99ab
+    0x97cd197c0aAA41564B55F3b13A8b2a6204DE99ab,
+    0x38Cd7547D0589a5647dC317d0D9481B5255Bd4Cf
   ];
 
   function run() external {
