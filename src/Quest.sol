@@ -2,12 +2,9 @@
 pragma solidity 0.8.13;
 
 import { ERC721 } from "solmate/tokens/ERC721.sol";
-import "solmate/utils/LibString.sol";
 import { QuestFactory } from "./Factory.sol";
 
 contract Quest is ERC721 {
-    using LibString for uint256;
-
     ///////////////////////////////
     ////////// Variables //////////
     ///////////////////////////////
@@ -27,15 +24,6 @@ contract Quest is ERC721 {
     ////////////////////////////
     ////////// Events //////////
     ////////////////////////////
-
-    /// @notice Emitted when a token is minted and a contributor is added to the quest
-    event QuestMinted(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is burned and a contributor is removed from a quest
-    event QuestBurned(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is transfer and a contributor's quests are recovered
-    event QuestTransfered(address indexed _oldContributor, address indexed _newContributor, uint256 _tokenId);
 
     /// @notice Emitted when the baseTokenURI is updated
     event UpdateTokenURI(string _oldBaseTokenURI, string _newBaseTokenURI);
@@ -170,7 +158,7 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        super.safeTransferFrom(_from, _to, _id);
+        transferFrom(_from, _to, _id);
     }
 
     /// @notice Recover a user's Quests
@@ -182,9 +170,9 @@ contract Quest is ERC721 {
         address _from,
         address _to,
         uint256 _id,
-        bytes calldata _data
+        bytes calldata
     ) public override onlyAdmin {
-        super.safeTransferFrom(_from, _to, _id, _data);
+        transferFrom(_from, _to, _id);
     }
 
     /// @notice No op method for approve

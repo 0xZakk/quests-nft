@@ -20,12 +20,6 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Emited when a quest is created
     event QuestCreated(address indexed questAddress, string indexed name);
 
-    /// @notice Emited when an admin is added
-    event AdminAdded(address indexed newAdmin);
-
-    /// @notice Emited when an admin is removed
-    event AdminRemoved(address indexed oldAdmin);
-
     ////////////////////////////
     ////////// Errors //////////
     ////////////////////////////
@@ -44,16 +38,6 @@ contract QuestFactory is Ownable2Step, AccessControl {
             msg.sender == owner() ||
             hasRole(ADMIN_ROLE, msg.sender)
         ) {
-            _;
-        } else {
-            revert NotAuthorized();
-        }
-    }
-
-    /// @notice Check that the caller is an admin
-    /// @dev msg.sender needs to be an admin
-    modifier onlyAdmin() {
-        if(hasRole(ADMIN_ROLE, msg.sender)) {
             _;
         } else {
             revert NotAuthorized();
@@ -85,11 +69,11 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @param _tokenURI The URI for the token metadata
     /// @param _contractURI Contract metadata for NFT Marketplaces
     function createQuest(
-        string memory _name,
-        string memory _symbol,
-        address[] memory _contributors,
-        string memory _tokenURI,
-        string memory _contractURI
+        string calldata _name,
+        string calldata _symbol,
+        address[] calldata _contributors,
+        string calldata _tokenURI,
+        string calldata _contractURI
     ) external onlyOwnerOrAdmin returns (Quest) {
         Quest _quest = new Quest(
             _name,
