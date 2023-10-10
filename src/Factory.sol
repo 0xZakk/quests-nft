@@ -41,16 +41,6 @@ contract QuestFactory is Ownable2Step, AccessControl {
         }
     }
 
-    /// @notice Check that the caller is an admin
-    /// @dev msg.sender needs to be an admin
-    modifier onlyAdmin() {
-        if(hasRole(ADMIN_ROLE, msg.sender)) {
-            _;
-        } else {
-            revert("QuestFactory: caller is not admin");
-        }
-    }
-
     /////////////////////////////////
     ////////// Constructor //////////
     /////////////////////////////////
