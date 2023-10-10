@@ -66,11 +66,11 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @param _tokenURI The URI for the token metadata
     /// @param _contractURI Contract metadata for NFT Marketplaces
     function createQuest(
-        string memory _name,
-        string memory _symbol,
-        address[] memory _contributors,
-        string memory _tokenURI,
-        string memory _contractURI
+        string calldata _name,
+        string calldata _symbol,
+        address[] calldata _contributors,
+        string calldata _tokenURI,
+        string calldata _contractURI
     ) external onlyOwnerOrAdmin returns (Quest) {
         Quest _quest = new Quest(
             _name,
