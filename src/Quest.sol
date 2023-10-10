@@ -145,9 +145,9 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        if(_from == _ownerOf[_id]) revert InvalidFrom();
+        if(_from != _ownerOf[_id]) revert InvalidFrom();
 
-        if(_to != address(0)) revert InvalidRecipient();
+        if(_to == address(0)) revert InvalidRecipient();
 
         if(balanceOf(_to) > 0) revert AlreadyHolding();
 
