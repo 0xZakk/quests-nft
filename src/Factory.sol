@@ -52,8 +52,12 @@ contract QuestFactory is Ownable2Step, AccessControl {
     constructor(address[] memory _admins) {
         _grantRole(ADMIN_ROLE, msg.sender);
 
-        for (uint256 i = 0; i < _admins.length; i++) {
+        for (uint256 i; i < _admins.length; ) {
             _grantRole(ADMIN_ROLE, _admins[i]);
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
