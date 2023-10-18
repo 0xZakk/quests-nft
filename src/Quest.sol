@@ -2,10 +2,11 @@
 pragma solidity 0.8.13;
 
 import { ERC721 } from "solmate/tokens/ERC721.sol";
+import { Initializable } from "oz/proxy/utils/Initializable.sol";
 import "solmate/utils/LibString.sol";
 import { QuestFactory } from "./Factory.sol";
 
-contract Quest is ERC721 {
+contract Quest is ERC721, Initializable {
     using LibString for uint256;
 
     ///////////////////////////////
@@ -77,7 +78,9 @@ contract Quest is ERC721 {
     constructor(
         string memory _name,
         string memory _symbol
-    ) ERC721(_name, _symbol) {}
+    ) ERC721(_name, _symbol) {
+        _disableInitializers();
+    }
 
     // @notice Initialize the contract after it has been deployed
     /// @param _name Name of the Quest NFT
@@ -91,7 +94,7 @@ contract Quest is ERC721 {
         address[] memory _contributors,
         string memory _tokenURI,
         string memory _contractURI
-    ) external {
+    ) initializer() external {
         // set factory address
         factory = QuestFactory(msg.sender);
 

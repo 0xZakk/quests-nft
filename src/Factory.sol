@@ -102,8 +102,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
         string memory _contractURI,
         string memory _nonce
     ) external onlyOwnerOrAdmin returns (Quest) {
-        bytes32 salt = keccak256(abi.encodePacked(msg.sender, _nonce));
-        Quest _quest = Quest( Clones.cloneDeterministic(questImplementation, salt) );
+        Quest _quest = Quest( Clones.clone(questImplementation) );
 
         _quest.initialize(
             _name,
