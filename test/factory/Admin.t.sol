@@ -68,6 +68,32 @@ contract FactoryAdminTest is TestBase {
         );
     }
 
+    function testAdmin__CallToGrantRoleFails() public {
+        address admin = admins[0];
+
+        vm.expectRevert();
+        factory.grantRole(keccak256("ADMIN"), admin);
+
+        vm.startPrank(owner);
+        vm.expectRevert();
+        factory.grantRole(keccak256("ADMIN"), admin);
+
+        vm.stopPrank();
+    }
+
+    function testAdmin__CallToRevokeRoleFails() public {
+        address admin = admins[0];
+
+        vm.expectRevert();
+        factory.revokeRole(keccak256("ADMIN"), admin);
+
+        vm.startPrank(owner);
+        vm.expectRevert();
+        factory.revokeRole(keccak256("ADMIN"), admin);
+
+        vm.stopPrank();
+    }
+
     // only admin can call createQuest
     function testAdmin__OnlyAdminCanCreateQuest() public {
         // reverts if not called by admin
