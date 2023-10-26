@@ -35,21 +35,7 @@ contract TestBase is Test {
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI,
-            "testing mc testface"
-        );
-
-        return testQuest;
-    }
-    function _createQuest(string calldata _nonce) public returns (Quest) {
-        vm.prank(owner);
-        Quest testQuest = factory.createQuest(
-            questName,
-            questSymbol,
-            questContributors,
-            questTokenURI,
-            questContractURI,
-            _nonce
+            questContractURI
         );
 
         return testQuest;

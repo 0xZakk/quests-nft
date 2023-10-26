@@ -24,18 +24,15 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Emited when a quest is created
     event QuestCreated(address indexed questAddress, string indexed name);
 
-    /// @notice Emited when an admin is added
-    event AdminAdded(address indexed newAdmin);
-
-    /// @notice Emited when an admin is removed
-    event AdminRemoved(address indexed oldAdmin);
-
     /// @notice Emited when the Quest NFT implementation contract is updated
     event QuestImplementationUpdated(address indexed newImplementation);
 
     ////////////////////////////
     ////////// Errors //////////
     ////////////////////////////
+
+    /// @notice Thrown when a caller is not authorized
+    error NotAuthorized();
 
     ///////////////////////////////
     ////////// Modifiers //////////
@@ -50,17 +47,7 @@ contract QuestFactory is Ownable2Step, AccessControl {
         ) {
             _;
         } else {
-            revert("QuestFactory: caller is not owner or admin");
-        }
-    }
-
-    /// @notice Check that the caller is an admin
-    /// @dev msg.sender needs to be an admin
-    modifier onlyAdmin() {
-        if(hasRole(ADMIN_ROLE, msg.sender)) {
-            _;
-        } else {
-            revert("QuestFactory: caller is not admin");
+            revert NotAuthorized();
         }
     }
 
@@ -76,8 +63,12 @@ contract QuestFactory is Ownable2Step, AccessControl {
 
         _grantRole(ADMIN_ROLE, msg.sender);
 
-        for (uint256 i = 0; i < _admins.length; i++) {
+        for (uint256 i; i < _admins.length; ) {
             _grantRole(ADMIN_ROLE, _admins[i]);
+
+            unchecked {
+                ++i;
+            }
         }
 
         emit QuestImplementationUpdated(_questImplementation);
@@ -95,12 +86,11 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @param _tokenURI The URI for the token metadata
     /// @param _contractURI Contract metadata for NFT Marketplaces
     function createQuest(
-        string memory _name,
-        string memory _symbol,
-        address[] memory _contributors,
-        string memory _tokenURI,
-        string memory _contractURI,
-        string memory _nonce
+        string calldata _name,
+        string calldata _symbol,
+        address[] calldata _contributors,
+        string calldata _tokenURI,
+        string calldata _contractURI
     ) external onlyOwnerOrAdmin returns (Quest) {
         Quest _quest = Quest( Clones.clone(questImplementation) );
 

@@ -82,8 +82,7 @@ contract CreateQuestTest is TestBase {
             questSymbol,
             contributorsWithDuplicate, // includes a duplicate
             questTokenURI,
-            questContractURI,
-            "testing mc testface"
+            questContractURI
         );
 
         vm.stopPrank();

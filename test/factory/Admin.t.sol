@@ -77,8 +77,7 @@ contract FactoryAdminTest is TestBase {
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI,
-            "testing 123"
+            questContractURI
         );
 
         vm.prank(admins[0]);
@@ -87,8 +86,7 @@ contract FactoryAdminTest is TestBase {
             questSymbol,
             questContributors,
             questTokenURI,
-            questContractURI,
-            "testing 123"
+            questContractURI
         );
     }
     // Sets Quest implementation correctly

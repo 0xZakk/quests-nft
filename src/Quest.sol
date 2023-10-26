@@ -29,15 +29,6 @@ contract Quest is ERC721, Initializable {
     ////////// Events //////////
     ////////////////////////////
 
-    /// @notice Emitted when a token is minted and a contributor is added to the quest
-    event QuestMinted(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is burned and a contributor is removed from a quest
-    event QuestBurned(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is transfer and a contributor's quests are recovered
-    event QuestTransfered(address indexed _oldContributor, address indexed _newContributor, uint256 _tokenId);
-
     /// @notice Emitted when the baseTokenURI is updated
     event UpdateTokenURI(string _oldBaseTokenURI, string _newBaseTokenURI);
 
@@ -56,6 +47,12 @@ contract Quest is ERC721, Initializable {
 
     /// @notice Thrown when an account already holds this Quest NFT
     error AlreadyHolding();
+
+    /// @notice Thrown when a recipient is invalid
+    error InvalidRecipient();
+
+    /// @notice Thrown when a from address is invalid
+    error InvalidFrom();
 
     ///////////////////////////////
     ////////// Modifiers //////////
@@ -106,9 +103,13 @@ contract Quest is ERC721, Initializable {
         name = _name;
         symbol = _symbol;
 
-        for (uint256 i = 0; i < _contributors.length; i++) {
+        for (uint256 i = 0; i < _contributors.length;) {
             if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
             _mint(_contributors[i], i);
+
+            unchecked {
+                ++i;
+            }
         }
 
         nextTokenID = _contributors.length;
@@ -153,9 +154,9 @@ contract Quest is ERC721, Initializable {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        require(_from == _ownerOf[_id], "WRONG_FROM");
+        if(_from != _ownerOf[_id]) revert InvalidFrom();
 
-        require(_to != address(0), "INVALID_RECIPIENT");
+        if(_to == address(0)) revert InvalidRecipient();
 
         if(balanceOf(_to) > 0) revert AlreadyHolding();
 
@@ -184,7 +185,7 @@ contract Quest is ERC721, Initializable {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        super.safeTransferFrom(_from, _to, _id);
+        transferFrom(_from, _to, _id);
     }
 
     /// @notice Recover a user's Quests
@@ -196,9 +197,9 @@ contract Quest is ERC721, Initializable {
         address _from,
         address _to,
         uint256 _id,
-        bytes calldata _data
+        bytes calldata
     ) public override onlyAdmin {
-        super.safeTransferFrom(_from, _to, _id, _data);
+        transferFrom(_from, _to, _id);
     }
 
     /// @notice No op method for approve
