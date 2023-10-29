@@ -15,7 +15,8 @@ contract BurningQuests is TestBase {
 
         vm.prank(admin1);
         uint256 id = quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.expectRevert();
@@ -35,7 +36,8 @@ contract BurningQuests is TestBase {
 
         vm.prank(admin1);
         uint256 id = quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.prank(admin1);
@@ -55,7 +57,8 @@ contract BurningQuests is TestBase {
 
         vm.prank(admin1);
         uint256 id = quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.prank(user);

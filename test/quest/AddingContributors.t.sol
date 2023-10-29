@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import {TestBase} from "../bases/TestBase.sol";
+import { TestBase } from "../bases/TestBase.sol";
 import { Quest } from "../../src/Quest.sol";
 
 contract AddingContributorsTest is TestBase {
@@ -16,12 +16,14 @@ contract AddingContributorsTest is TestBase {
         // reverts if not called by admin
         vm.expectRevert();
         quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.prank(admins[0]);
         quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         assertEq(
@@ -36,12 +38,14 @@ contract AddingContributorsTest is TestBase {
 
         vm.prank(admin1);
         quest.mint(
-        user
+            user,
+            "tokenUrl"
         );
 
         vm.expectRevert();
         quest.mint(
-        user
+            user,
+            "tokenUrl"
         );
     }
 }

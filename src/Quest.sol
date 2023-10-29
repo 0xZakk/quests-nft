@@ -19,7 +19,7 @@ contract Quest is ERC721 {
     string public baseTokenURI;
 
     /// @notice token uri per token
-    mapping(uint256 tokenId => string) private _tokenURIs;
+    mapping(uint256 => string) private _tokenURIs;
 
     /// @notice reverse search for token of a contributor
     mapping(address => uint256) internal _tokenOf;
@@ -138,7 +138,7 @@ contract Quest is ERC721 {
     /// @param _id The token ID to burn
     function burn(uint256 _id) external {
         // msg.sender must be an admin or the owner of the token
-        if (msg.sender != ownerOf(_id) && !factory.isAdmin(msg.sender)) {
+        if (msg.sender != ownerOf(_id) && !_factory.isAdmin(msg.sender)) {
             revert NotAuthorized();
         }
 
