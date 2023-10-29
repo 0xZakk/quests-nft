@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 import {TestBase} from "../bases/TestBase.sol";
 import { Quest } from "../../src/Quest.sol";

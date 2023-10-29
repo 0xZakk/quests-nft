@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 import { ERC721 } from "solmate/tokens/ERC721.sol";
-import "solmate/utils/LibString.sol";
-
 import { QuestFactory } from "./Factory.sol";
 
 contract Quest is ERC721 {
-    using LibString for uint256;
-
     ///////////////////////////////
     ////////// Variables //////////
     ///////////////////////////////
@@ -35,16 +31,7 @@ contract Quest is ERC721 {
     ////////// Events //////////
     ////////////////////////////
 
-    /// @notice Emitted when a token is minted and a contributor is added to the quest
-    event QuestMinted(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is burned and a contributor is removed from a quest
-    event QuestBurned(address indexed _contributor, uint256 _tokenId);
-
-    /// @notice Emited when a token is transfer and a contributor's quests are recovered
-    event QuestTransfered(address indexed _oldContributor, address indexed _newContributor, uint256 _tokenId);
-
-    /// @notice Emitted when the tsokenURI is updated
+    /// @notice Emitted when the tokenURI is updated
     event UpdateTokenURI(uint256 _tokenId, string _newTokenURI);
 
     /// @notice Emittedwhen the contractURI is updated
@@ -62,6 +49,12 @@ contract Quest is ERC721 {
 
     /// @notice Thrown when an account already holds this Quest NFT
     error AlreadyHolding();
+
+    /// @notice Thrown when a recipient is invalid
+    error InvalidRecipient();
+
+    /// @notice Thrown when a from address is invalid
+    error InvalidFrom();
 
     ///////////////////////////////
     ////////// Modifiers //////////
@@ -99,11 +92,15 @@ contract Quest is ERC721 {
         baseTokenURI = _tokenURI;
         contractURI = _contractURI;
 
-
-        for (uint256 i = 0; i < _contributors.length; i++) {
+        for (uint256 i; i < _contributors.length;) {
+            if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
             _safeMint(_contributors[i], i);
             _tokenOf[_contributors[i]] = i;
             _tokenURIs[i] = _tokenURI;
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -139,8 +136,13 @@ contract Quest is ERC721 {
     /// @notice Remove a contributor from a quest
     /// @dev Burning a token represents removing a contributor from a quest
     /// @param _id The token ID to burn
-    function burn(uint256 _id) external onlyAdmin {
-        address owner = ownerOf(_id);
+    function burn(uint256 _id) external {
+        // msg.sender must be an admin or the owner of the token
+        if (msg.sender != ownerOf(_id) && !factory.isAdmin(msg.sender)) {
+            revert NotAuthorized();
+        }
+
+         address owner = ownerOf(_id);
         _burn(_id);
         delete _tokenOf[owner];
     }
@@ -155,9 +157,11 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        require(_from == _ownerOf[_id], "WRONG_FROM");
+        if(_from != _ownerOf[_id]) revert InvalidFrom();
 
-        require(_to != address(0), "INVALID_RECIPIENT");
+        if(_to == address(0)) revert InvalidRecipient();
+
+        if(balanceOf(_to) > 0) revert AlreadyHolding();
 
         // Underflow of the sender's balance is impossible because we check for
         // ownership above and the recipient's balance can't realistically overflow.
@@ -185,8 +189,42 @@ contract Quest is ERC721 {
         address _to,
         uint256 _id
     ) public override onlyAdmin {
-        super.safeTransferFrom(_from, _to, _id);
+        transferFrom(_from, _to, _id);
         _tokenOf[_to] = _id;
+    }
+
+    /// @notice Recover a user's Quests
+    /// @dev Admins can transfer tokens from one account to another, should someone lose access to their wallet
+    /// @param _from Address to transfer the ID from
+    /// @param _to Address to transfer the ID to
+    /// @param _id Token ID to transfer
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint256 _id,
+        bytes calldata
+    ) public override onlyAdmin {
+        transferFrom(_from, _to, _id);
+    }
+
+    /// @notice No op method for approve
+    /// @dev Quests can't be transferred, other than by admins, so we don't need to implement approve.
+    /// @param _spender Address to approve
+    /// @param _id Token ID to approve
+    function approve(address _spender, uint256 _id) public pure override {
+        revert NotAuthorized();
+    }
+
+    /// @notice No op method for setApprovalForAll
+    /// @dev Quests can't be transferred, other than by admins, so we don't need to implement setApprovalForAll.
+    /// @param _operator Address to approve
+    /// @param _approved Whether to approve or not
+    function setApprovalForAll(address _operator, bool _approved)
+        public
+        pure
+        override
+    {
+        revert NotAuthorized();
     }
 
     /// @notice Token URI to find metadata for each _id

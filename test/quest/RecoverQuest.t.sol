@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 import {TestBase} from "../bases/TestBase.sol";
 import { Quest } from "../../src/Quest.sol";
@@ -128,6 +128,50 @@ contract RecoverQuestTest is TestBase {
         assertEq(
             quest.ownerOf(id),
             userBackupWallet
+        );
+    }
+
+    // recovering a quest can't lead to a duplicate quest
+    function testRecoverQuest__CannotRecoverDuplicateQuest() public {
+        Quest quest = _createQuest();
+
+        // questContributors[0] holds a quest
+        assertEq(
+            quest.balanceOf(questContributors[0]),
+            1
+        );
+
+        vm.prank(admin1);
+        uint256 questId = quest.mint( user );
+
+        // User holds a quest
+        assertEq(
+            quest.balanceOf(user),
+            1
+        );
+
+        vm.startPrank(admin1);
+
+        // Reverts because questContributors[0] already holds a token
+        vm.expectRevert();
+        quest.transferFrom(
+            user,
+            questContributors[0],
+            questId
+        );
+
+        vm.stopPrank();
+
+        // questContributors[0] holds a quest
+        assertEq(
+            quest.balanceOf(questContributors[0]),
+            1
+        );
+
+        // User holds a quest
+        assertEq(
+            quest.balanceOf(user),
+            1
         );
     }
 }

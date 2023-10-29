@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 import {TestBase} from "../bases/TestBase.sol";
 import { Quest } from "../../src/Quest.sol";
@@ -66,6 +66,32 @@ contract FactoryAdminTest is TestBase {
             factory.isAdmin(admin),
             false
         );
+    }
+
+    function testAdmin__CallToGrantRoleFails() public {
+        address admin = admins[0];
+
+        vm.expectRevert();
+        factory.grantRole(keccak256("ADMIN"), admin);
+
+        vm.startPrank(owner);
+        vm.expectRevert();
+        factory.grantRole(keccak256("ADMIN"), admin);
+
+        vm.stopPrank();
+    }
+
+    function testAdmin__CallToRevokeRoleFails() public {
+        address admin = admins[0];
+
+        vm.expectRevert();
+        factory.revokeRole(keccak256("ADMIN"), admin);
+
+        vm.startPrank(owner);
+        vm.expectRevert();
+        factory.revokeRole(keccak256("ADMIN"), admin);
+
+        vm.stopPrank();
     }
 
     // only admin can call createQuest
