@@ -102,6 +102,8 @@ contract Quest is ERC721 {
                 ++i;
             }
         }
+
+        _nextTokenID = _contributors.length;
     }
 
     /////////////////////////////
@@ -128,7 +130,9 @@ contract Quest is ERC721 {
         _tokenOf[_to] = _id;
         _tokenURIs[_id] = _tokenURI;
 
-        ++_nextTokenID;
+        unchecked {
+            ++_nextTokenID;
+        }
 
         return _id;
     }
