@@ -1,66 +1,55 @@
-## Foundry
+# Quests NFT
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A key feature of [Quests.com](https://quests.com/), a platform for creating
+a socially-verified portfolio of work, is the commemorative Quest NFT.
 
-Foundry consists of:
+This token is minted and distributed to all contributors at the end of a quest
+to represent their unique contribution. Combined, a collection of Quest NFTs
+make up a contributor's body of work.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## System Overview
 
-## Documentation
+This system has two main components: a factory contract and a quest NFT
+contract:
 
-https://book.getfoundry.sh/
+![System diagram of the Quests NFT platform, including the Factory and Quest NFT contracts](./assets/system-architecture.png)
 
-## Usage
+The Factory implementation ( [`src/Factory.sol`](./src/Factory.sol) ) is where
+instances of a Quest NFT ([`src/Quest.sol`](./src/Quest.sol)) are created at the
+end of a project. Quest NFTs can only be created or updated by admins on the
+Factory contract.
 
-### Build
+## Contracts
 
-```shell
-$ forge build
-```
+### [`Factory.sol`](./src/Factory.sol)
 
-### Test
+The Factory contract is used to create instances of the Quest NFT - one per
+project in quests.com - and manage a list of permissioned wallets.
 
-```shell
-$ forge test
-```
+A quest can be created with the `createQuest` method, which will create a new
+instance of `Quest.sol` with the provided data (name, symbol, contributors,
+token URI, and contract URI). A quest can only be created by an admin.
 
-### Format
+The Factory stores a list of admins using OpenZeppelin's `AccessControl` and has
+an owner address using `Ownable2Step`. The contract owner can grant the admin
+role to an address. The admin role is required to create a new quest or update
+an existing quest.
 
-```shell
-$ forge fmt
-```
+### [`Quest.sol`](./src/Quest.sol)
 
-### Gas Snapshots
+The majority of the system's logic is in the `Quest` contract.
 
-```shell
-$ forge snapshot
-```
+The admin role on the Factory contract is required to create a new quest or
+update an existing quest (`Quest.sol` checks for the admin role on
+`Factory.sol`).
 
-### Anvil
+The contract is a fairly standard NFT contract with a couple of important
+considerations:
 
-```shell
-$ anvil
-```
+- Most actions are gated to admins on the `Factory.sol` contract.
+- `transferFrom` is a shadow implementation of `ERC721.sol#transferFrom` by solmate that skips checking for approval. This is okay since only addresses with the admin role on `Factory.sol` can mint, burn, and transfer tokens.
+- The contract maps addresses to IDs (like most NFT contracts) and data about the quest is stored off-chain on IPFS.
 
-### Deploy
+## License
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+This project is licensed under MIT. See [`LICENSE`](./LICENSE) for more details.
