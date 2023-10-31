@@ -252,7 +252,7 @@ contract Quest is ERC721 {
         view
         returns (uint256)
     {
-        if (_tokenOf[_owner] < 0) revert NonExistentToken();
+        if (balanceOf(_owner) == 0) revert NonExistentToken();
         return _tokenOf[_owner];
     }
 

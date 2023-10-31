@@ -8,6 +8,7 @@ import { Quest } from "../../src/Quest.sol";
 contract TestBase is Test {
     address owner = makeAddr("owner");
     address user = makeAddr("user");
+    address user2 = makeAddr("user2");
     address userBackupWallet = makeAddr("userBackupWallet");
     address admin1 = makeAddr("admin1");
     address admin2 = makeAddr("admin2");

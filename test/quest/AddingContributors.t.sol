@@ -30,6 +30,45 @@ contract AddingContributorsTest is TestBase {
             quest.balanceOf(user),
             1
         );
+
+        vm.prank(admins[0]);
+        quest.mint(
+            user2,
+            "tokenUrl"
+        );
+
+        assertEq(
+            quest.balanceOf(user2),
+            1
+        );
+
+
+        assertEq(
+            quest.tokenOf(user2),
+            3
+        );
+    }
+
+      // only admin can call mint
+    function testAdmin__ErroWhenGettingTokenOfNonHolder() public {
+        Quest quest = _createQuest();
+
+        // reverts if user has no token
+        vm.expectRevert();
+        quest.tokenOf(
+            user
+        );
+
+        vm.prank(admins[0]);
+        quest.mint(
+            user,
+            "tokenUrl"
+        );
+
+        assertEq(
+            quest.tokenOf(user),
+            2
+        );
     }
 
     // a user can't be added to a quest more than once
