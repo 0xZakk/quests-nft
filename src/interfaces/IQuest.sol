@@ -13,6 +13,7 @@ interface IQuest {
     function mint(address _contributor) external;
     function name() external view returns (string memory);
     function ownerOf(uint256 id) external view returns (address owner);
+    function tokenOf(address owner) external view returns (uint256 id);
     function safeTransferFrom(address _from, address _to, uint256 _id) external;
     function safeTransferFrom(address _from, address _to, uint256 _id, bytes memory data) external;
     function setApprovalForAll(address operator, bool approved) external;

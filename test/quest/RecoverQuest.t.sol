@@ -14,7 +14,7 @@ contract RecoverQuestTest is TestBase {
         Quest quest = _createQuest();
 
         vm.prank(admin1);
-        uint256 questId = quest.mint( user );
+        uint256 questId = quest.mint( user, "tokenUrl" );
 
         // Reverts if not called by an admin
         vm.expectRevert();
@@ -56,7 +56,7 @@ contract RecoverQuestTest is TestBase {
         Quest quest = _createQuest();
 
         vm.prank(admin1);
-        uint256 questId = quest.mint( user );
+        uint256 questId = quest.mint( user, "tokenUrl" );
 
         // Reverts if not called by an admin
         vm.expectRevert();
@@ -98,7 +98,7 @@ contract RecoverQuestTest is TestBase {
         Quest quest = _createQuest();
 
         vm.prank(admins[0]);
-        uint256 id = quest.mint( user );
+        uint256 id = quest.mint( user, "tokenUrl" );
 
         // reverts if not called by admin
         vm.expectRevert();
@@ -142,7 +142,7 @@ contract RecoverQuestTest is TestBase {
         );
 
         vm.prank(admin1);
-        uint256 questId = quest.mint( user );
+        uint256 questId = quest.mint( user, "tokenUrl" );
 
         // User holds a quest
         assertEq(

@@ -14,7 +14,8 @@ contract ApproveQuest is TestBase {
 
         vm.prank(admin1);
         uint256 id = quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.startPrank(user);
@@ -33,7 +34,8 @@ contract ApproveQuest is TestBase {
 
         vm.prank(admin1);
         quest.mint(
-            user
+            user,
+            "tokenUrl"
         );
 
         vm.startPrank(user);

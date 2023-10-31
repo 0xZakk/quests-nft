@@ -12,7 +12,7 @@ contract QuestAdmin is TestBase {
     // only admin can update the tokenURI
     function questAdmin__testUpdateTokenURI() public {
         Quest quest = _createQuest();
-        quest.setTokenURI("https://api.quest.com/token/");
+        quest.setTokenURI(1, "https://api.quest.com/token/");
         assertEq(quest.tokenURI(1), "https://api.quest.com/token/");
     }
 
