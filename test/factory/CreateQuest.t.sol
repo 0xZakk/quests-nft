@@ -29,16 +29,17 @@ contract CreateQuestTest is TestBase {
             "TQ"
         );
     }
+
     // sets the tokenURI correctly
     function testCreateQuest__SetsTokenURICorrectly() public {
         Quest quest = _createQuest();
 
         assertEq(
-            quest.tokenURI(0),
+            quest.tokenURI(1),
             questTokenURI
         );
         assertEq(
-            quest.tokenURI(1),
+            quest.tokenURI(2),
             questTokenURI
         );
     }
@@ -62,7 +63,7 @@ contract CreateQuestTest is TestBase {
                 1
             );
             assertEq(
-                quest.ownerOf(i),
+                quest.ownerOf(i + 1),
                 questContributors[i]
             );
         }

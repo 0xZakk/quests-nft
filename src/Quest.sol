@@ -94,16 +94,17 @@ contract Quest is ERC721 {
 
         for (uint256 i; i < _contributors.length;) {
             if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
-            _safeMint(_contributors[i], i);
-            _tokenOf[_contributors[i]] = i;
-            _tokenURIs[i] = _tokenURI;
+            uint256 tokenId = i + 1;
+            _safeMint(_contributors[i], tokenId);
+            _tokenOf[_contributors[i]] = tokenId;
+            _tokenURIs[tokenId] = _tokenURI;
 
             unchecked {
                 ++i;
             }
         }
 
-        _nextTokenID = _contributors.length;
+        _nextTokenID = _contributors.length + 1;
     }
 
     /////////////////////////////

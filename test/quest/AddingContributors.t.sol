@@ -45,7 +45,7 @@ contract AddingContributorsTest is TestBase {
 
         assertEq(
             quest.tokenOf(user2),
-            3
+            4
         );
     }
 
@@ -67,7 +67,7 @@ contract AddingContributorsTest is TestBase {
 
         assertEq(
             quest.tokenOf(user),
-            2
+            3
         );
     }
 
