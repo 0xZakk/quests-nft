@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 import { Ownable2Step } from "oz/access/Ownable2Step.sol";
 import { AccessControl } from "oz/access/AccessControl.sol";
+import { Clones } from "oz/proxy/Clones.sol";
 import { Quest } from "./Quest.sol";
 
 contract QuestFactory is Ownable2Step, AccessControl {
@@ -13,12 +14,18 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @notice Admin role constant, used with AccessControl
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN");
 
+    /// @notice Current implementation of Quest NFT contract (to be cloned)
+    address public questImplementation;
+
     ////////////////////////////
     ////////// Events //////////
     ////////////////////////////
 
     /// @notice Emited when a quest is created
     event QuestCreated(address indexed questAddress, string indexed name);
+
+    /// @notice Emited when the Quest NFT implementation contract is updated
+    event QuestImplementationUpdated(address indexed newImplementation);
 
     ////////////////////////////
     ////////// Errors //////////
@@ -48,8 +55,12 @@ contract QuestFactory is Ownable2Step, AccessControl {
     ////////// Constructor //////////
     /////////////////////////////////
 
-    // @param _admins List of addresses to set as contract admins
-    constructor(address[] memory _admins) {
+    /// @notice Constructor for QuestFactory
+    /// @param _questImplementation Address of the Quest NFT implementation contract
+    /// @param _admins List of addresses to set as contract admins
+    constructor(address _questImplementation, address[] memory _admins) {
+        questImplementation = _questImplementation;
+
         _grantRole(ADMIN_ROLE, msg.sender);
 
         for (uint256 i; i < _admins.length; ) {
@@ -59,6 +70,8 @@ contract QuestFactory is Ownable2Step, AccessControl {
                 ++i;
             }
         }
+
+        emit QuestImplementationUpdated(_questImplementation);
     }
 
     /////////////////////////////
@@ -79,7 +92,9 @@ contract QuestFactory is Ownable2Step, AccessControl {
         string calldata _tokenURI,
         string calldata _contractURI
     ) external onlyOwnerOrAdmin returns (Quest) {
-        Quest _quest = new Quest(
+        Quest _quest = Quest( Clones.clone(questImplementation) );
+
+        _quest.initialize(
             _name,
             _symbol,
             _contributors,
@@ -111,5 +126,14 @@ contract QuestFactory is Ownable2Step, AccessControl {
     /// @param _account Account to have the admin role revoked
     function revokeAdmin(address _account) public onlyOwner {
         _revokeRole(ADMIN_ROLE, _account);
+    }
+
+    /// @notice Update the Quest NFT implementation contract
+    /// @dev This will update the Quest NFT implementation contract
+    /// @param _newImplementation The address of the new Quest NFT implementation contract
+    function setQuestImplementation(address _newImplementation) external onlyOwner {
+        questImplementation = _newImplementation;
+
+        emit QuestImplementationUpdated(_newImplementation);
     }
 }
