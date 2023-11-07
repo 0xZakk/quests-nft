@@ -34,11 +34,11 @@ contract CreateQuestTest is TestBase {
         Quest quest = _createQuest();
 
         assertEq(
-            quest.tokenURI(0),
+            quest.tokenURI(1),
             questTokenURI
         );
         assertEq(
-            quest.tokenURI(1),
+            quest.tokenURI(2),
             questTokenURI
         );
     }
@@ -62,7 +62,8 @@ contract CreateQuestTest is TestBase {
                 1
             );
             assertEq(
-                quest.ownerOf(i),
+                // 0 offset, token IDs start at 1 but array starts at 0
+                quest.ownerOf(i + 1),
                 questContributors[i]
             );
         }

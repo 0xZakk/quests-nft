@@ -6,6 +6,8 @@ import { Initializable } from "oz/proxy/utils/Initializable.sol";
 import "solmate/utils/LibString.sol";
 import { QuestFactory } from "./Factory.sol";
 
+import "forge-std/console.sol";
+
 contract Quest is ERC721, Initializable {
     using LibString for uint256;
 
@@ -24,6 +26,9 @@ contract Quest is ERC721, Initializable {
 
     /// @notice Contract URI for marketplace metadata
     string public contractURI;
+
+    /// @notice Reverse mapping of owners to token ID
+    mapping(address => uint256) public tokenOf;
 
     ////////////////////////////
     ////////// Events //////////
@@ -103,16 +108,28 @@ contract Quest is ERC721, Initializable {
         name = _name;
         symbol = _symbol;
 
+        nextTokenID = 1;
+
         for (uint256 i = 0; i < _contributors.length;) {
-            if(balanceOf(_contributors[i]) > 0) revert AlreadyHolding();
-            _mint(_contributors[i], i);
+            _mint(_contributors[i]);
 
             unchecked {
                 ++i;
             }
         }
+    }
 
-        nextTokenID = _contributors.length;
+    function _mint(address _to) internal returns (uint256) {
+        if(balanceOf(_to) > 0) revert AlreadyHolding();
+
+        uint256 _id = nextTokenID;
+
+        super._mint(_to, _id);
+        tokenOf[_to] = _id;
+
+        ++nextTokenID;
+
+        return _id;
     }
 
     /////////////////////////////
@@ -123,11 +140,7 @@ contract Quest is ERC721, Initializable {
     /// @dev Mints the account a token to represent their contribution to the quest
     /// @param _to The account that will receive the token
     function mint(address _to) external onlyAdmin returns (uint256) {
-        if(balanceOf(_to) > 0) revert AlreadyHolding();
-        uint256 _id = nextTokenID;
-
-        _mint(_to, _id);
-        ++nextTokenID;
+        uint256 _id = _mint(_to);
 
         return _id;
     }
