@@ -35,11 +35,11 @@ contract CreateQuestTest is TestBase {
 
         assertEq(
             quest.tokenURI(0),
-            questTokenURI
+            "https://test.com/0.json"
         );
         assertEq(
             quest.tokenURI(1),
-            questTokenURI
+            "https://test.com/1.json"
         );
     }
     // Sets the contract URI correctly

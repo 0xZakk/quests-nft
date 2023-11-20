@@ -83,20 +83,20 @@ contract Quest is ERC721, Initializable {
     /// @param _name Name of the Quest NFT
     /// @param _symbol Symbol for the Quest NFT
     /// @param _contributors List of addresses to pre-mint to
-    /// @param _tokenURI URI for the token
+    /// @param _baseTokenUri URI for the token
     /// @param _contractURI Contract metadata URI (for NFT marketplaces)
     function initialize(
         string memory _name,
         string memory _symbol,
         address[] memory _contributors,
-        string memory _tokenURI,
+        string memory _baseTokenUri,
         string memory _contractURI
     ) initializer() external {
         // set factory address
         factory = QuestFactory(msg.sender);
 
-        // accept and set tokenURI
-        baseTokenURI = _tokenURI;
+        // accept and set baseTokenUri
+        baseTokenURI = _baseTokenUri;
         contractURI = _contractURI;
 
         // update name and symbol
@@ -232,16 +232,16 @@ contract Quest is ERC721, Initializable {
         returns (string memory)
     {
         if (ownerOf(_id) == address(0)) revert NonExistentToken();
-        return baseTokenURI;
+        return string.concat(baseTokenURI, LibString.toString(_id), ".json");
     }
 
-    /// @notice Setter method for updating the tokenURI
-    /// @dev Only admins can update the tokenURI
-    /// @param _newTokenURI The new tokenURI
-    function setTokenURI(string memory _newTokenURI) external onlyAdmin {
-        string memory _oldTokenURI = baseTokenURI;
-        baseTokenURI = _newTokenURI;
-        emit UpdateTokenURI(_oldTokenURI, _newTokenURI);
+    /// @notice Setter method for updating the baseTokenURI
+    /// @dev Only admins can update the baseTokenURI
+    /// @param _newBaseTokenURI The new baseTokenURI
+    function setTokenURI(string memory _newBaseTokenURI) external onlyAdmin {
+        string memory _oldBaseTokenURI = baseTokenURI;
+        baseTokenURI = _newBaseTokenURI;
+        emit UpdateTokenURI(_oldBaseTokenURI, _newBaseTokenURI);
     }
 
     /// @notice Setter method for updating the contractURI
