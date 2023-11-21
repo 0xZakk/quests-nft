@@ -17,7 +17,7 @@ contract TestBase is Test {
 
     string questName = "Test Quest";
     string questSymbol = "TQ";
-    string questTokenURI = "https://test.com";
+    string questTokenURI = "https://test.com/";
     string questContractURI = "https://test.com";
     address[] questContributors = [makeAddr("contributor1"), makeAddr("contributor2")];
 
