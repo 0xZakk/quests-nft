@@ -6,8 +6,6 @@ import { Initializable } from "oz/proxy/utils/Initializable.sol";
 import "solmate/utils/LibString.sol";
 import { QuestFactory } from "./Factory.sol";
 
-import "forge-std/console.sol";
-
 contract Quest is ERC721, Initializable {
     using LibString for uint256;
 
