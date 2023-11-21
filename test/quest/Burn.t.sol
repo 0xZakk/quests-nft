@@ -69,4 +69,31 @@ contract BurningQuests is TestBase {
         );
     }
 
+    // test token look up returns 0
+    function testBurnQuest__TokenOfResetsToZero() public {
+        Quest quest = _createQuest();
+
+        vm.prank(admin1);
+        uint256 id = quest.mint(
+            user
+        );
+
+        assertEq(
+            quest.tokenOf(user),
+            id
+        );
+
+        assertEq(
+            quest.ownerOf(id),
+            user
+        );
+
+        vm.prank(admin1);
+        quest.burn(id);
+
+        assertEq(
+            quest.tokenOf(user),
+            0
+        );
+    }
 }

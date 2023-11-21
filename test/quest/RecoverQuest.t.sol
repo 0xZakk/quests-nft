@@ -174,4 +174,34 @@ contract RecoverQuestTest is TestBase {
             1
         );
     }
+
+    // test token look up
+    function testRecoverQuest__TransfersReverseTokenLookup() public {
+        Quest quest = _createQuest();
+
+        vm.prank(admin1);
+        uint256 questId = quest.mint( user );
+
+        assertEq(
+            quest.tokenOf(user),
+            questId
+        );
+
+        vm.prank(admin1);
+        quest.transferFrom(
+            user,
+            userBackupWallet,
+            questId
+        );
+
+        assertEq(
+            quest.tokenOf(user),
+            0
+        );
+
+        assertEq(
+            quest.tokenOf(userBackupWallet),
+            questId
+        );
+    }
 }

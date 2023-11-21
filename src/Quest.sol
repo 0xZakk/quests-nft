@@ -154,7 +154,9 @@ contract Quest is ERC721, Initializable {
             revert NotAuthorized();
         }
 
+        address owner = ownerOf(_id);
         _burn(_id);
+        delete tokenOf[owner];
     }
 
     /// @notice Recover a user's Quests
@@ -182,6 +184,8 @@ contract Quest is ERC721, Initializable {
         }
 
         _ownerOf[_id] = _to;
+        delete tokenOf[_from];
+        tokenOf[_to] = _id;
 
         delete getApproved[_id];
 
