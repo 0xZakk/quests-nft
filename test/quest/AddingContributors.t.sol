@@ -10,7 +10,7 @@ contract AddingContributorsTest is TestBase {
     }
 
     // only admin can call mint
-    function testAdmin__OnlyAdminCanMint() public {
+    function testAddingContributors__OnlyAdminCanMint() public {
         Quest quest = _createQuest();
 
         // reverts if not called by admin
@@ -31,17 +31,31 @@ contract AddingContributorsTest is TestBase {
     }
 
     // a user can't be added to a quest more than once
-    function testAdmin__CantBeAddedMoreThanOnce() public {
+    function testAddingContributors__CantBeAddedMoreThanOnce() public {
         Quest quest = _createQuest();
 
-        vm.prank(admin1);
+        vm.prank(admins[0]);
         quest.mint(
-        user
+            user
         );
 
         vm.expectRevert();
         quest.mint(
-        user
+            user
+        );
+    }
+
+    // look up the token ID for a user
+    function testAddingContributors__LookUpTokenID() public {
+        Quest quest = _createQuest();
+
+        assertEq(
+            quest.tokenOf(questContributors[0]),
+            1
+        );
+        assertEq(
+            quest.tokenOf(questContributors[1]),
+            2
         );
     }
 }

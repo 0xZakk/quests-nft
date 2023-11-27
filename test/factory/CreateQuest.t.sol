@@ -34,12 +34,12 @@ contract CreateQuestTest is TestBase {
         Quest quest = _createQuest();
 
         assertEq(
-            quest.tokenURI(0),
-            "https://test.com/0.json"
-        );
-        assertEq(
             quest.tokenURI(1),
             "https://test.com/1.json"
+        );
+        assertEq(
+            quest.tokenURI(2),
+            "https://test.com/2.json"
         );
     }
     // Sets the contract URI correctly
@@ -62,7 +62,8 @@ contract CreateQuestTest is TestBase {
                 1
             );
             assertEq(
-                quest.ownerOf(i),
+                // 0 offset, token IDs start at 1 but array starts at 0
+                quest.ownerOf(i + 1),
                 questContributors[i]
             );
         }
